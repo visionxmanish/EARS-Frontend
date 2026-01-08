@@ -9,7 +9,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import ManageSectorPage from '@/pages/sectors/manageSectorPage';
 import DataCategoriesPage from '@/pages/data_categories/dataCategoriesPage';
 import OfficePage from '@/pages/offices/officePage';
-import { ManageEconomicData } from '@/pages/economicData/manageEconomicDataPage';
+import ManageEconomicDataPage from '@/pages/economicData/manageEconomicDataPage';
 
 
 const router = createBrowserRouter([
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'manage-economic-data',
-        element: <Layout><ManageEconomicData /></Layout>,
+        element: <Layout><ManageEconomicDataPage /></Layout>,
       },
       {
         path: '*',

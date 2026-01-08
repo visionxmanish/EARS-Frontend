@@ -1,4 +1,4 @@
-export const ManageEconomicData = () => {
+export default function ManageEconomicDataPage() {
     return (
         <div>
             <h1>Manage Economic Data</h1>
