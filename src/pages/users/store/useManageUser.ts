@@ -23,6 +23,7 @@ export interface User {
 export interface CreateUserPayload {
     staff_code: string;
     first_name: string;
+    middle_name: string | null;
     last_name: string;
     email: string;
     password?: string;

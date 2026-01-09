@@ -35,6 +35,7 @@ export default function ManageUsersPage() {
     const [formData, setFormData] = useState<CreateUserPayload>({
         staff_code: "",
         first_name: "",
+        middle_name: "",
         last_name: "",
         email: "",
         password: "",
@@ -66,6 +67,7 @@ export default function ManageUsersPage() {
             staff_code: "",
             first_name: "",
             last_name: "",
+            middle_name: "",
             email: "",
             password: "",
             role: "maker",
@@ -84,6 +86,7 @@ export default function ManageUsersPage() {
             staff_code: user.staff_code,
             first_name: user.first_name,
             last_name: user.last_name,
+            middle_name: user.middle_name,
             email: user.email || "",
             role: user.role,
             is_active: user.is_active
@@ -278,24 +281,28 @@ export default function ManageUsersPage() {
 
              {/* Create Dialog */}
              <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                <DialogContent className="sm:max-w-[425px] bg-white border-none">
+                <DialogContent className="sm:max-w-[800px] bg-white border-none">
                     <DialogHeader>
                         <DialogTitle>Create New User</DialogTitle>
                         <DialogDescription>Add a new user to the system.</DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleCreateSubmit} className="grid gap-4 py-4">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="space-y-3">
                                 <Label htmlFor="first_name">First Name *</Label>
                                 <Input id="first_name" value={formData.first_name} onChange={e => setFormData({...formData, first_name: e.target.value})} required />
                             </div>
-                            <div className="space-y-2">
+                             <div className="space-y-3">
+                                <Label htmlFor="first_name">Middle Name </Label>
+                                <Input id="first_name" value={formData.middle_name? formData.middle_name : ""} onChange={e => setFormData({...formData, middle_name: e.target.value})}  />
+                            </div>
+                            <div className="space-y-3">
                                 <Label htmlFor="last_name">Last Name *</Label>
                                 <Input id="last_name" value={formData.last_name} onChange={e => setFormData({...formData, last_name: e.target.value})} required />
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="staff_code">Staff Code *</Label>
+                            <Label htmlFor="staff_code">Username *</Label>
                             <Input id="staff_code" value={formData.staff_code} onChange={e => setFormData({...formData, staff_code: e.target.value})} required placeholder="EMP-XXX" />
                         </div>
                         <div className="space-y-2">
