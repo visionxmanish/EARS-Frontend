@@ -10,6 +10,7 @@ import ManageSectorPage from '@/pages/sectors/manageSectorPage';
 import DataCategoriesPage from '@/pages/data_categories/dataCategoriesPage';
 import OfficePage from '@/pages/offices/officePage';
 import ManageEconomicDataPage from '@/pages/economicData/manageEconomicDataPage';
+import ManageUsersPage from '@/pages/users/manageUsersPage';
 
 
 const router = createBrowserRouter([
@@ -57,6 +58,15 @@ const router = createBrowserRouter([
       {
         path: 'login',
         element: <Login />,
+      },
+    ],
+  },
+  {
+    path: '/users',
+    children: [
+      {
+        path: "users-list",
+        element: <Layout><ManageUsersPage /></Layout>,
       },
     ],
   }

@@ -24,6 +24,7 @@ export interface SidebarItem {
   badgeVariant?: "default" | "secondary" | "destructive" | "outline";
   requiredRole?: string[];
   submenu?: SidebarItem[];
+  role?: string[];
 }
 
 export const sidebarItems: SidebarItem[] = [
@@ -36,6 +37,7 @@ export const sidebarItems: SidebarItem[] = [
     label: 'Data Management',
     href: '',
     icon: <Database className="h-4 w-4" />,
+    role: ['maker', 'checker', 'admin'],
     submenu: [
       { label: 'Manage Fiscal Years', href: '/fiscal-year', icon: <CalendarClock className="h-3 w-3" /> },
       { label: 'Manage Sectors', href: '/sector', icon: <GitBranch className="h-3 w-3" /> },
@@ -46,16 +48,18 @@ export const sidebarItems: SidebarItem[] = [
   },
   {
     label: 'Reports',
-    href: '/tickets/status',
+    href: '',
     icon: <FilePieChart className="h-4 w-4" />,
+    role: ['maker', 'checker', 'admin'],
     submenu: [
       { label: 'Generate Reports', href: '/level-report', icon: <BarChart3 className="h-3 w-3" />, badge: '12', badgeVariant: 'destructive' },
     ]
   },
   {
     label: 'User Management',
-    href: '/categories',
+    href: '',
     icon: <Users className="h-4 w-4" />,
+    role: ['admin'],
     submenu: [
       { label: 'Manage Users', href: '/users/users-list', icon: <UserCog className="h-3 w-3" /> },
       { label: 'User Activity Logs', href: 'users/activity-logs', icon: <Activity className="h-3 w-3" /> },
