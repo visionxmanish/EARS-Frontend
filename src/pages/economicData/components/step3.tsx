@@ -70,7 +70,7 @@ export default function Step3() {
                                 {children.map((child) => (
                                     <div key={child.id} className="space-y-2">
                                         <Label className="text-gray-700 font-medium">
-                                            {child.name} <span className="text-gray-400 font-normal">{child.unit ? `(${child.unit})` : ''}</span>
+                                            {child.name} <span className="text-gray-400 font-normal">Unit:  {child.unit ? `(${child.unit})` : ''}</span>
                                         </Label>
                                         <div className="relative">
                                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
