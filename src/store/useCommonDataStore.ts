@@ -79,7 +79,6 @@ export const useCommonDataStore = create<CommonDataState>((set, get) => ({
   fetchCurrentUserData: async () => {
     try {
       const response = await apiClient.get('users/me/');
-      console.log(response.data);
       set({ currentUserData: response.data });
     } catch (error: any) {
       console.error("Failed to fetch current user data", error);

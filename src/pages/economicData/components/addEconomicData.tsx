@@ -2,6 +2,7 @@ import { useAddEconomicDataStore } from "../store/useAddEconomicDataStore";
 import Stepper from "./stepper";
 import Step1 from "./step1";
 import Step2 from "./step2";
+import Step3 from "./step3";
 
 
 
@@ -15,6 +16,7 @@ export function AddEconomicData() {
       <div className="mt-8">
         {step === 1 && <Step1 />}
         {step === 2 && <Step2 />}
+        {step === 3 && <Step3 />}
       </div>
     </div>
   );
