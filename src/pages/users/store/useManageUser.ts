@@ -6,11 +6,11 @@ export interface User {
     staff_code: string;
     username: string | null;
     email: string | null;
+    phone_number: string | null;
     first_name: string;
     middle_name: string | null;
     last_name: string;
     full_name: string;
-    phone_number: string | null;
     role: string;
     is_active: boolean;
     is_staff: boolean;
@@ -26,6 +26,7 @@ export interface CreateUserPayload {
     middle_name: string | null;
     last_name: string;
     email: string;
+    phone_number: string | null;
     password?: string;
     role: string;
     is_active?: boolean;
