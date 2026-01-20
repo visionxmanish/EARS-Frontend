@@ -102,7 +102,7 @@ export default function Step3() {
                 </Button>
                 <Button 
                     className="bg-[#0066cc] hover:bg-blue-700 text-white px-8 h-10 font-medium shadow-sm transition-colors"
-                    onClick={() => console.log('Save Progress', economicDataValues)}
+                    onClick={() => setStep(4)}
                 >
                     Review
                 </Button>

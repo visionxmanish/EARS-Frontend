@@ -3,6 +3,7 @@ import Stepper from "./stepper";
 import Step1 from "./step1";
 import Step2 from "./step2";
 import Step3 from "./step3";
+import Step4 from "./step4";
 
 
 
@@ -17,6 +18,7 @@ export function AddEconomicData() {
         {step === 1 && <Step1 />}
         {step === 2 && <Step2 />}
         {step === 3 && <Step3 />}
+        {step === 4 && <Step4 />}
       </div>
     </div>
   );

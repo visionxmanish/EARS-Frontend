@@ -18,6 +18,7 @@ interface AddEconomicDataState {
     district: string;
     localBody: string;
     sector: string;
+    dataValues: Record<string, string>;
   };
   dataCategories: DataCategory[];
   economicDataValues: Record<string, string>;
@@ -40,10 +41,13 @@ export const useAddEconomicDataStore = create<AddEconomicDataState>((set, get) =
       district: "",
       localBody: "",
       sector: "",
+      dataValues: {},
     },
     dataCategories: [],
     economicDataValues: {},
     isLoading: false,
+
+
 
     fetchDataCategoriesList: async () => {
       const { formData } = get();
@@ -70,8 +74,10 @@ export const useAddEconomicDataStore = create<AddEconomicDataState>((set, get) =
     })),
 
     setEconomicDataValue: (categoryId, value) => set((state) => ({
-      economicDataValues: { ...state.economicDataValues, [categoryId]: value }
+      economicDataValues: { ...state.economicDataValues, [categoryId]: value },
+      formData: { ...state.formData, dataValues: { ...state.formData.dataValues, [categoryId]: value } },
     })),
+    
 
     resetForm: () => set({
       step: 1,
@@ -82,6 +88,7 @@ export const useAddEconomicDataStore = create<AddEconomicDataState>((set, get) =
         district: "",
         localBody: "",
         sector: "",
+        dataValues: {},
       },
       dataCategories: [],
       economicDataValues: {},
