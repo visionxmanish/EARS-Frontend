@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import apiClient from "@/lib/axios";
+import { API_ENDPOINTS } from "@/constants/api_constants";
 
 export interface ReportType {
   id: number;
@@ -22,6 +23,20 @@ export interface Municipality {
   name: string;
   district: number;
   type: string;
+}
+
+
+export interface Offices {
+  id: number;
+  office: string;
+  status: string;
+  created_by: number;
+  created_by_name: string;
+  approved_by: number;
+  approved_by_name: string;
+  approved_at: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CurrentUserData {
@@ -54,6 +69,7 @@ interface CommonDataState {
   municipalities: Municipality[];
   isLoading: boolean;
   error: string | null;
+  offices: Offices[];
   currentUserData: CurrentUserData | null;
 
   fetchReportTypes: () => Promise<void>;
@@ -61,6 +77,7 @@ interface CommonDataState {
   fetchDistricts: (provinceId: number) => Promise<void>;
   fetchMunicipalities: (districtId: number) => Promise<void>;
   fetchCurrentUserData: () => Promise<void>;
+  fetchUserRelatedOffices: () => Promise<void>;
   
   getAccessibleProvinces: () => Province[];
   getAccessibleDistricts: () => District[];
@@ -72,6 +89,7 @@ export const useCommonDataStore = create<CommonDataState>((set, get) => ({
   provinces: [],
   districts: [],
   municipalities: [],
+  offices: [],
   isLoading: false,
   error: null,
   currentUserData: null,
@@ -82,6 +100,17 @@ export const useCommonDataStore = create<CommonDataState>((set, get) => ({
       set({ currentUserData: response.data });
     } catch (error: any) {
       console.error("Failed to fetch current user data", error);
+    }
+  },
+
+
+  fetchUserRelatedOffices: async () => {
+    try {
+      const response = await apiClient.get(API_ENDPOINTS.OFFICES);
+      console.log(response.data);
+      set({ offices: response.data.results });
+    } catch (error: any) {
+      console.error("Failed to fetch user related offices", error);
     }
   },
 

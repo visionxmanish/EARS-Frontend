@@ -18,6 +18,10 @@ export interface User {
     profile_picture: string | null;
     created_at: string;
     updated_at: string;
+    user_related_offices: number[];
+    user_provinces: number[];
+    user_districts: number[];
+    user_municipalities: number[];
 }
 
 export interface CreateUserPayload {
@@ -30,15 +34,24 @@ export interface CreateUserPayload {
     password?: string;
     role: string;
     is_active?: boolean;
+    user_related_offices?: number[];
+    user_provinces?: number[];
+    user_districts?: number[];
+    user_municipalities?: number[];
 }
 
 export interface UpdateUserPayload {
     role?: string;
     is_active?: boolean;
     first_name?: string;
+    middle_name?: string;
     last_name?: string;
     email?: string;
     phone_number?: string;
+    user_related_offices?: number[];
+    user_provinces?: number[];
+    user_districts?: number[];
+    user_municipalities?: number[];
 }
 
 interface UserState {
