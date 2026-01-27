@@ -66,16 +66,10 @@ export function EditUserDialog({ open, onOpenChange, user, onSubmit, loading }: 
     // Fetch districts when provinces change
     useEffect(() => {
         const fetchDistricts = async () => {
-             // If no user is selected or no provinces selected, clear districts
-             // But valid existing selections should be kept if possible? 
-             // Logic: If user changes provinces, re-fetch.
+
             if (!formData.user_provinces || formData.user_provinces.length === 0) {
                 setAvailableDistricts([]);
-                // Only clear districts if user is actively editing? 
-                // For edit mode, we might want to preserve initial values until explicitly changed?
-                // Actually, standard behavior: if parent cleared, children cleared.
                  setFormData(prev => {
-                     // Check if valid to clear. If strictly following CreateUserDialog logic:
                      if(prev.user_districts.length > 0) return { ...prev, user_districts: [], user_municipalities: [] };
                      return prev;
                  });
