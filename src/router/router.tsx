@@ -11,6 +11,7 @@ import DataCategoriesPage from '@/pages/data_categories/dataCategoriesPage';
 import OfficePage from '@/pages/offices/officePage';
 import ManageEconomicDataPage from '@/pages/economicData/manageEconomicDataPage';
 import ManageUsersPage from '@/pages/users/manageUsersPage';
+import ReportPage from '@/pages/reports/ReportPage';
 
 
 const router = createBrowserRouter([
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: 'manage-economic-data',
         element: <Layout><ManageEconomicDataPage /></Layout>,
+      },
+      {
+        path: '/level-report',
+        element: <Layout><ReportPage /></Layout>,
       },
       {
         path: '*',
