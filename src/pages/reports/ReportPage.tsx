@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useFiscalStore } from "@/pages/fiscal_year/store/useFiscalStore";
 import { useSectorStore } from "@/pages/sectors/store/useSectorStore";
 import { useCommonDataStore } from "@/store/useCommonDataStore";
@@ -13,22 +13,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { FileText } from "lucide-react";
+import { useReportStore } from "./store/useReportStore";
 
 export default function ReportPage() {
   const { fiscalYears, fetchFiscalYears } = useFiscalStore();
   const { sectors, fetchSectors } = useSectorStore();
   const { reportTypes, fetchReportTypes } = useCommonDataStore();
-  
-  // State for Generate Level Report
-  const [selectedFiscalYear, setSelectedFiscalYear] = useState<string>("");
-  const [selectedSector, setSelectedSector] = useState<string>("");
-  const [selectedReportLevel, setSelectedReportLevel] = useState<string>("");
 
-  // State for Generate Report for Sectors with Different Report
-  const [selectedFiscalYear2, setSelectedFiscalYear2] = useState<string>("");
-  const [selectedSector2, setSelectedSector2] = useState<string>("");
-  const [selectedReportType, setSelectedReportType] = useState<string>("");
-  const [selectedReportLevel2, setSelectedReportLevel2] = useState<string>("");
+  const { selectedFiscalYear, selectedSector, selectedReportLevel, selectedFiscalYear2, selectedSector2, selectedReportType, selectedReportLevel2, setFiscalYear, setSector, setReportLevel, setFiscalYear2, setSector2, setReportType, setReportLevel2 } = useReportStore();
+
 
   useEffect(() => {
     fetchFiscalYears();
@@ -73,13 +66,13 @@ export default function ReportPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2 w-full">
               <Label className="font-semibold text-slate-700">Fiscal Year</Label>
-              <Select value={selectedFiscalYear} onValueChange={setSelectedFiscalYear}>
+              <Select value={selectedFiscalYear} onValueChange={setFiscalYear}>
                 <SelectTrigger className="bg-white w-full">
-                  <SelectValue placeholder="Select Fiscal Year" />
+                  <SelectValue  placeholder="Select Fiscal Year" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white border-gray-200">
                   {fiscalYears.map((fy) => (
-                    <SelectItem key={fy.id} value={fy.id.toString()}>
+                    <SelectItem key={fy.id} value={fy.id.toString()} className="hover:bg-gray-200">
                       {fy.year}
                     </SelectItem>
                   ))}
@@ -89,13 +82,13 @@ export default function ReportPage() {
 
             <div className="space-y-2 w-full">
               <Label className="font-semibold text-slate-700">Sector</Label>
-              <Select value={selectedSector} onValueChange={setSelectedSector}>
+              <Select value={selectedSector} onValueChange={setSector}>
                 <SelectTrigger className="bg-white w-full">
                   <SelectValue placeholder="Select Sector" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white border-gray-200">
                   {sectors.map((sector) => (
-                    <SelectItem key={sector.id} value={sector.id.toString()}>
+                    <SelectItem key={sector.id} value={sector.id.toString()} className="hover:bg-gray-200">
                       {sector.name}
                     </SelectItem>
                   ))}
@@ -105,14 +98,14 @@ export default function ReportPage() {
 
             <div className="space-y-2 w-full">
               <Label className="font-semibold text-slate-700">Report Level</Label>
-              <Select value={selectedReportLevel} onValueChange={setSelectedReportLevel}>
+              <Select value={selectedReportLevel} onValueChange={setReportLevel}>
                 <SelectTrigger className="bg-white w-full">
                   <SelectValue placeholder="Select Report Level" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="municipality">Municipality Level</SelectItem>
-                  <SelectItem value="district">District Level</SelectItem>
-                  <SelectItem value="province">Province Level</SelectItem>
+                <SelectContent className="bg-white border-gray-200">
+                  <SelectItem value="municipality" className="hover:bg-gray-200">Municipality Level</SelectItem>
+                  <SelectItem value="district" className="hover:bg-gray-200">District Level</SelectItem>
+                  <SelectItem value="province" className="hover:bg-gray-200">Province Level</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -160,13 +153,13 @@ export default function ReportPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="space-y-2 w-full">
               <Label className="font-semibold text-slate-700">Fiscal Year</Label>
-              <Select value={selectedFiscalYear2} onValueChange={setSelectedFiscalYear2}>
+              <Select value={selectedFiscalYear2} onValueChange={setFiscalYear2}>
                 <SelectTrigger className="bg-white w-full">
                   <SelectValue placeholder="Select Fiscal Year" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white border-gray-200">
                   {fiscalYears.map((fy) => (
-                    <SelectItem key={fy.id} value={fy.id.toString()}>
+                    <SelectItem key={fy.id} value={fy.id.toString()} className="hover:bg-gray-200">
                       {fy.year}
                     </SelectItem>
                   ))}
@@ -176,15 +169,15 @@ export default function ReportPage() {
 
             <div className="space-y-2 w-full">
               <Label className="font-semibold text-slate-700">Sector (Different Report)</Label>
-              <Select value={selectedSector2} onValueChange={setSelectedSector2}>
+              <Select value={selectedSector2} onValueChange={setSector2}>
                 <SelectTrigger className="bg-white w-full">
                   <SelectValue placeholder="Select Sector" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white border-gray-200">
                   {sectors
                     .filter(s => s.has_different_report)
                     .map((sector) => (
-                    <SelectItem key={sector.id} value={sector.id.toString()}>
+                    <SelectItem key={sector.id} value={sector.id.toString()} className="hover:bg-gray-200">
                       {sector.name}
                     </SelectItem>
                   ))}
@@ -194,13 +187,13 @@ export default function ReportPage() {
 
             <div className="space-y-2 w-full">
               <Label className="font-semibold text-slate-700">Report Type</Label>
-              <Select value={selectedReportType} onValueChange={setSelectedReportType}>
+              <Select value={selectedReportType} onValueChange={setReportType}>
                 <SelectTrigger className="bg-white w-full">
                   <SelectValue placeholder="Select Report Type" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white border-gray-200">
                    {reportTypes.map((rt) => (
-                    <SelectItem key={rt.id} value={rt.id.toString()}>
+                    <SelectItem key={rt.id} value={rt.id.toString()} className="hover:bg-gray-200">
                       {rt.name}
                     </SelectItem>
                   ))}
@@ -210,14 +203,14 @@ export default function ReportPage() {
 
             <div className="space-y-2 w-full">
               <Label className="font-semibold text-slate-700">Report Level</Label>
-              <Select value={selectedReportLevel2} onValueChange={setSelectedReportLevel2}>
+              <Select value={selectedReportLevel2} onValueChange={setReportLevel2}>
                 <SelectTrigger className="bg-white w-full">
                   <SelectValue placeholder="Select Report Level" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="municipality">Municipality Level</SelectItem>
-                  <SelectItem value="district">District Level</SelectItem>
-                  <SelectItem value="province">Province Level</SelectItem>
+                <SelectContent className="bg-white border-gray-200">
+                  <SelectItem value="municipality" className="hover:bg-gray-200">Municipality Level</SelectItem>
+                  <SelectItem value="district" className="hover:bg-gray-200">District Level</SelectItem>
+                  <SelectItem value="province" className="hover:bg-gray-200">Province Level</SelectItem>
                 </SelectContent>
               </Select>
             </div>
