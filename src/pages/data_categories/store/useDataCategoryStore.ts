@@ -35,7 +35,6 @@ export interface DataCategoryQueryParams {
   sector?: number | string;
   status?: string;
   search?: string;
-  page?: number;
 }
 
 export interface CreateDataCategoryPayload {
@@ -61,10 +60,6 @@ export interface DataCategoryState {
   isLoading: boolean;
   error: string | null;
 
-  currentPage: number;
-  totalPages: number;
-  totalItems: number;
-
   fetchDataCategories: (params?: DataCategoryQueryParams) => Promise<void>;
   createDataCategory: (data: CreateDataCategoryPayload) => Promise<void>;
   updateDataCategory: (id: number, data: UpdateDataCategoryPayload) => Promise<void>;
@@ -77,35 +72,24 @@ export const useDataCategoryStore = create<DataCategoryState>((set, get) => ({
   categories: [],
   isLoading: false,
   error: null,
-  currentPage: 1,
-  totalPages: 1,
-  totalItems: 0,
 
   fetchDataCategories: async (params = {}) => {
+    if(!params.sector) return;
     set({ isLoading: true, error: null });
-    try {
-      const response = await apiClient.get('/data-categories/', {
+    try { 
+      const response = await apiClient.get('/data-categories/by_sector', {
         params: { 
-            sector: params.sector,
-            status: params.status,
-            search: params.search,
-            page: params.page
+            sector_id: params.sector,
         },
       });
       
       if (response.data.results) {
           set({ 
               categories: response.data.results,
-              totalItems: response.data.count,
-              totalPages: Math.ceil(response.data.count / 20),
-              currentPage: params.page || 1
           });
       } else {
           set({ 
               categories: response.data,
-              totalItems: response.data.length,
-              totalPages: 1,
-              currentPage: 1
            });
       }
 

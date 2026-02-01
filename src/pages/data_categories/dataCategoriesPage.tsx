@@ -35,14 +35,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Pencil, Trash2, CheckCircle, XCircle, Plus, Search, Filter, CornerDownRight } from "lucide-react";
@@ -52,8 +45,6 @@ export default function DataCategoriesPage() {
     categories,
     isLoading: isCategoryLoading,
     error: categoryError,
-    currentPage,
-    totalPages,
     fetchDataCategories,
     createDataCategory,
     updateDataCategory,
@@ -95,25 +86,15 @@ export default function DataCategoriesPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
         fetchDataCategories({ 
-            page: currentPage, 
             search: searchQuery, 
             status: statusFilter,
             sector: selectedSector || undefined 
         });
     }, 500);
     return () => clearTimeout(timer);
-  }, [fetchDataCategories, currentPage, searchQuery, statusFilter, selectedSector]); 
+  }, [fetchDataCategories, searchQuery, statusFilter, selectedSector]); 
 
-  const handlePageChange = (page: number) => {
-      if (page >= 1 && page <= totalPages) {
-          fetchDataCategories({ 
-              page, 
-              search: searchQuery, 
-              status: statusFilter,
-              sector: selectedSector || undefined
-           });
-      }
-  }
+
 
   const openCreate = () => {
     if (!selectedSector) {
@@ -163,7 +144,6 @@ export default function DataCategoriesPage() {
             });
             // Refetch to see updates
              fetchDataCategories({ 
-                page: currentPage, 
                 search: searchQuery, 
                 status: statusFilter,
                 sector: selectedSector
@@ -192,7 +172,6 @@ export default function DataCategoriesPage() {
               setDeleteId(null);
               // Store might not auto-refresh if it doesn't know parameters, so manual refresh
                fetchDataCategories({ 
-                page: currentPage, 
                 search: searchQuery, 
                 status: statusFilter,
                 sector: selectedSector || undefined
@@ -394,43 +373,6 @@ export default function DataCategoriesPage() {
                         </Table>
                     </div>
 
-                    {totalPages > 1 && (
-                        <div className="mt-4 flex justify-end">
-                            <Pagination>
-                                <PaginationContent>
-                                    <PaginationItem>
-                                        <PaginationPrevious 
-                                            href="#" 
-                                            onClick={(e) => { e.preventDefault(); handlePageChange(currentPage - 1); }}
-                                            aria-disabled={currentPage === 1}
-                                            className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                                        />
-                                    </PaginationItem>
-                                    
-                                    {[...Array(totalPages)].map((_, i) => (
-                                        <PaginationItem key={i + 1}>
-                                            <PaginationLink 
-                                                href="#" 
-                                                isActive={currentPage === i + 1}
-                                                onClick={(e) => { e.preventDefault(); handlePageChange(i + 1); }}
-                                            >
-                                                {i + 1}
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                    ))}
-
-                                    <PaginationItem>
-                                        <PaginationNext 
-                                            href="#" 
-                                            onClick={(e) => { e.preventDefault(); handlePageChange(currentPage + 1); }}
-                                            aria-disabled={currentPage === totalPages}
-                                            className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-                                        />
-                                    </PaginationItem>
-                                </PaginationContent>
-                            </Pagination>
-                        </div>
-                    )}
                    </>
                )}
           </CardContent>
