@@ -70,7 +70,7 @@ interface EconomicDataState {
   selectedProgressEntries: any[]; // Or define interface
   isLoadingEntries: boolean;
 
-  fetchProgressList: (params?: { page?: number; status?: string; search?: string }) => Promise<void>;
+  fetchProgressList: (params?: { page?: number; status?: string; search?: string; sector?: string; report_type?: string }) => Promise<void>;
   fetchProgressEntries: (progressId: number) => Promise<void>;
   approveProgress: (id: number) => Promise<void>;
   rejectProgress: (id: number) => Promise<void>;

@@ -142,10 +142,9 @@ export const useCommonDataStore = create<CommonDataState>((set, get) => ({
   },
 
   fetchReportTypes: async () => {
-
     try {
-      const response = await apiClient.get('/report-types/');
-      set({ reportTypes: response.data.results });
+      const response = await apiClient.get('/report-types/', { params: { page_size: 1000 } });
+      set({ reportTypes: response.data.results || response.data });
     } catch (error: any) {
       console.error("Failed to fetch report types", error);
     }

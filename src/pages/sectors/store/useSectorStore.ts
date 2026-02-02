@@ -29,7 +29,7 @@ export interface SectorState {
   totalPages: number;
   totalItems: number;
 
-  fetchSectors: (params?: { status?: string; search?: string; page?: number }) => Promise<void>;
+  fetchSectors: (params?: { status?: string; search?: string; page?: number; page_size?: number }) => Promise<void>;
   createSector: (data: { name: string; description: string; has_different_report: boolean }) => Promise<void>;
   updateSector: (id: number, data: { name?: string; description?: string; has_different_report?: boolean }) => Promise<void>;
   deleteSector: (id: number) => Promise<void>;
@@ -52,7 +52,8 @@ export const useSectorStore = create<SectorState>((set, get) => ({
         params: { 
             status: params.status,
             search: params.search,
-            page: params.page
+            page: params.page,
+            page_size: params.page_size
         },
       });
       

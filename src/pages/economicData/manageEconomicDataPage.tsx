@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { useEconomicDataStore, type EconomicDataProgress } from "./store/useEconomicDataStore";
+import { useSectorStore } from "../sectors/store/useSectorStore";
+import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -10,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Trash2, Search, X } from "lucide-react";
 import { Status } from "@/constants/enum/statusEnum";
 import { useAuthStore } from "@/store/useAuthStore";
 import { format } from "date-fns";
@@ -37,18 +47,62 @@ export default function ManageEconomicDataPage() {
     totalPages,
   } = useEconomicDataStore();
   
+  const { sectors, fetchSectors } = useSectorStore();
+  const { reportTypes, fetchReportTypes } = useCommonDataStore();
   const { user } = useAuthStore();
+  
   const [isAddMode, setIsAddMode] = useState(false);
   const [selectedProgress, setSelectedProgress] = useState<EconomicDataProgress | null>(null);
   const [isViewOpen, setIsViewOpen] = useState(false);
 
+  // Filter States
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sectorFilter, setSectorFilter] = useState<string>("all");
+  const [reportTypeFilter, setReportTypeFilter] = useState<string>("all");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // Initial Data Fetch
   useEffect(() => {
-    fetchProgressList({ page: 1 });
+    fetchSectors({ page: 1, page_size: 1000 } as any); // Fetch all sectors for filter
+    fetchReportTypes();
   }, []);
+
+  // Debounce Search
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  // Fetch Data on Filter Change
+  useEffect(() => {
+    const params: any = { page: 1 }; // Reset to page 1 on filter change
+    if (debouncedSearch) params.search = debouncedSearch;
+    if (statusFilter && statusFilter !== "all") params.status = statusFilter;
+    if (sectorFilter && sectorFilter !== "all") params.sector = sectorFilter;
+    if (reportTypeFilter && reportTypeFilter !== "all") params.report_type = reportTypeFilter;
+    
+    fetchProgressList(params);
+  }, [debouncedSearch, statusFilter, sectorFilter, reportTypeFilter]);
 
   const handlePageChange = (page: number) => {
       if (page < 1 || page > totalPages) return;
-      fetchProgressList({ page });
+      const params: any = { page };
+      if (debouncedSearch) params.search = debouncedSearch;
+      if (statusFilter && statusFilter !== "all") params.status = statusFilter;
+      if (sectorFilter && sectorFilter !== "all") params.sector = sectorFilter;
+      if (reportTypeFilter && reportTypeFilter !== "all") params.report_type = reportTypeFilter;
+      
+      fetchProgressList(params);
+  };
+
+  const handleClearFilters = () => {
+      setSearch("");
+      setStatusFilter("all");
+      setSectorFilter("all");
+      setReportTypeFilter("all");
   };
 
   const handleDelete = async (id: number) => {
@@ -84,14 +138,76 @@ export default function ManageEconomicDataPage() {
 
   return (
     <div className="space-y-6 w-full">
-        <div className="flex flex-row justify-between items-center">
-            <h1 className="text-xl font-bold text-gray-800">Manage Economic Data</h1>
-            <div className="flex flex-row gap-2">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => setIsAddMode(true)}>
-                    Add New
-                </Button>
-                <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={() => console.log("Upload Excel")}>
-                    Upload Excel
+        <div className="flex flex-col gap-4">
+            <div className="flex flex-row justify-between items-center">
+                <h1 className="text-xl font-bold text-gray-800">Manage Economic Data</h1>
+                <div className="flex flex-row gap-2">
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => setIsAddMode(true)}>
+                        Add New
+                    </Button>
+                    <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={() => console.log("Upload Excel")}>
+                        Upload Excel
+                    </Button>
+                </div>
+            </div>
+
+            {/* Filters Section */}
+            <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+                <div className="lg:col-span-1">
+                     <div className="relative">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                        <Input
+                            placeholder="Search..."
+                            className="pl-9 bg-gray-50 border-gray-200"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
+                </div>
+                
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="bg-gray-50 border-gray-200">
+                        <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-none">
+                        <SelectItem value="all" className="hover:bg-gray-100">All Status</SelectItem>
+                        <SelectItem value={Status.PENDING} className="hover:bg-gray-100">Pending</SelectItem>
+                        <SelectItem value={Status.APPROVED} className="hover:bg-gray-100">Approved</SelectItem>
+                        <SelectItem value={Status.REJECTED} className="hover:bg-gray-100">Rejected</SelectItem>
+                    </SelectContent>
+                </Select>
+
+                <Select value={sectorFilter} onValueChange={setSectorFilter}>
+                    <SelectTrigger className="bg-gray-50 border-gray-200">
+                        <SelectValue placeholder="Sector" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-none">
+                        <SelectItem value="all">All Sectors</SelectItem>
+                        {sectors.map((sector) => (
+                            <SelectItem className="border-gray-200 hover:bg-gray-100" key={sector.id} value={sector.id.toString()}>
+                                {sector.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+
+                <Select value={reportTypeFilter} onValueChange={setReportTypeFilter}>
+                    <SelectTrigger className="bg-gray-50 border-gray-200">
+                        <SelectValue placeholder="Report Type" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-none">
+                        <SelectItem value="all">All Report Types</SelectItem>
+                        {reportTypes.map((type) => (
+                            <SelectItem className="border-gray-200 hover:bg-gray-100" key={type.id} value={type.id.toString()}>
+                                {type.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+
+                <Button variant="ghost" onClick={handleClearFilters} className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 lg:justify-start px-2">
+                    <X className="h-4 w-4 mr-2" />
+                    Clear Filters
                 </Button>
             </div>
         </div>
