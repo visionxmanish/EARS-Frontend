@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useEconomicDataStore, type EconomicDataProgress } from "../store/useEconomicDataStore";
+import { Badge } from "@/components/ui/badge";
 import { Coins, Loader2 } from "lucide-react";
 import apiClient from "@/lib/axios";
 import { format } from "date-fns";
@@ -90,7 +91,7 @@ export function ViewEconomicDataDialog({ progress, open, onOpenChange }: ViewEco
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-white sm:max-w-[800px] border-none max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Economic Data Details</DialogTitle>
         </DialogHeader>
@@ -181,7 +182,12 @@ function CategoryNode({ node, entries, depth }: { node: any, entries: any[], dep
         <div className="">
             {hasValue && (
                 <div className={`flex items-center py-1 ${depth > 0 ? "ml-4" : ""}`}>
-                     <DataRow name={node.name} value={entry?.value} unit={node.unit} />
+                     <DataRow 
+                        name={node.name} 
+                        value={entry?.value} 
+                        unit={node.unit} 
+                        status={entry?.status}
+                     />
                 </div>
             )}
             
@@ -202,17 +208,33 @@ function CategoryNode({ node, entries, depth }: { node: any, entries: any[], dep
     )
 }
 
-function DataRow({ name, value, unit, isRoot }: { name: string, value: string, unit?: string, isRoot?: boolean }) {
+function DataRow({ name, value, unit, isRoot, status }: { name: string, value: string, unit?: string, isRoot?: boolean, status?: string }) {
+    const getStatusColor = (status?: string) => {
+        switch (status?.toLowerCase()) {
+            case 'approved': return "bg-green-100 text-green-700 hover:bg-green-100 border-green-200";
+            case 'rejected': return "bg-red-100 text-red-700 hover:bg-red-100 border-red-200";
+            case 'pending': return "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 border-yellow-200";
+            default: return "bg-gray-100 text-gray-700 hover:bg-gray-100 border-gray-200";
+        }
+    };
+
     return (
         <div className={`flex justify-between items-center w-full`}>
             <span className={`text-gray-600 flex items-center gap-2 ${isRoot ? "font-medium" : "text-sm"}`}>
                 {!isRoot && <Coins className="h-3.5 w-3.5 text-gray-400" />}
                 {name}
             </span>
-            <span className="font-semibold text-gray-800">
-                {Number(value).toLocaleString()}
-                {unit && <span className="text-xs font-normal text-gray-400 ml-1">({unit})</span>}
-            </span>
+            <div className="flex items-center gap-3">
+                <span className="font-semibold text-gray-800">
+                    {Number(value).toLocaleString()}
+                    {unit && <span className="text-xs font-normal text-gray-400 ml-1">({unit})</span>}
+                </span>
+                {status && (
+                    <Badge variant="outline" className={`h-5 text-[10px] px-1.5 ${getStatusColor(status)}`}>
+                        {status}
+                    </Badge>
+                )}
+            </div>
         </div>
     );
 }
