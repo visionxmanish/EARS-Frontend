@@ -1,6 +1,6 @@
 import apiClient from "@/lib/axios";
 import { create } from "zustand";
-
+import { type User } from "@/store/useAuthStore";
 export interface DataCategory {
   id: number;
   name: string;
@@ -29,6 +29,8 @@ interface AddEconomicDataState {
   setEconomicDataValue: (categoryId: string, value: string) => void;
   resetForm: () => void;
   fetchDataCategoriesList: () => Promise<void>;
+  submitEconomicData: (user : User) => Promise<void>;
+  // submit
 }
 
 export const useAddEconomicDataStore = create<AddEconomicDataState>((set, get) => {
@@ -93,5 +95,36 @@ export const useAddEconomicDataStore = create<AddEconomicDataState>((set, get) =
       dataCategories: [],
       economicDataValues: {},
     }),
-  });
+
+
+  submitEconomicData: async (user : User) => {
+    const { formData } = get();
+
+    set({ isLoading: true });
+    try {
+
+      const economicDataProgressPayload = {
+        fiscal_year: formData.fiscalYear,
+        user: user.id,
+        contributors: [
+          user.id
+        ],
+        report_type: formData.reportType,
+        province: formData.province,
+        district: formData.district,
+        municipality : formData.localBody,
+        sector: formData.sector,
+        is_completed: false,
+
+      };
+      const response = await apiClient.post('/economic-data-progress/', economicDataProgressPayload);
+      console.log(response.data);
+      set({ economicDataValues: response.data });
+    } catch (error) {
+      console.error("Failed to submit economic data", error);
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+})
 });

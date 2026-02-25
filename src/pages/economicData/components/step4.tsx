@@ -5,16 +5,18 @@ import { useFiscalStore } from "@/pages/fiscal_year/store/useFiscalStore";
 import { useSectorStore } from "@/pages/sectors/store/useSectorStore";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Coins, FileText, MapPin, Calendar, Activity } from "lucide-react";
+import { Coins, FileText, MapPin, Calendar, Activity} from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function Step4() {
-    const { formData, setStep, dataCategories, fetchDataCategoriesList } = useAddEconomicDataStore();
+    const { formData, setStep, dataCategories, fetchDataCategoriesList, submitEconomicData } = useAddEconomicDataStore();
     const { 
         provinces, districts, municipalities, reportTypes,
         fetchProvinces, fetchReportTypes, fetchDistricts, fetchMunicipalities
     } = useCommonDataStore();
     const { fiscalYears, fetchFiscalYears } = useFiscalStore();
     const { sectors, fetchSectors } = useSectorStore();
+    const { user } = useAuthStore();
 
     // Ensure metadata is available for mapping IDs to Names
     useEffect(() => {
@@ -83,10 +85,13 @@ export default function Step4() {
 
         return treeNodes;
     })();
+    
 
+
+    // Function to add data to the backend 
     const handleSubmit = () => {
         console.log("Submitting Data:", formData);
-        // Add submission logic here
+        submitEconomicData(user!);
     };
 
     return (
