@@ -90,7 +90,6 @@ export default function Step4() {
 
     // Function to add data to the backend 
     const handleSubmit = () => {
-        console.log("Submitting Data:", formData);
         submitEconomicData(user!);
     };
 

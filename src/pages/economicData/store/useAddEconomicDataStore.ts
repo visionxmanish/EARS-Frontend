@@ -1,6 +1,14 @@
 import apiClient from "@/lib/axios";
 import { create } from "zustand";
 import { type User } from "@/store/useAuthStore";
+import { API_ENDPOINTS } from "@/constants/api_constants";
+
+
+type EconomicDataValue = {
+  category: number;
+  value: number;
+} 
+
 export interface DataCategory {
   id: number;
   name: string;
@@ -30,7 +38,7 @@ interface AddEconomicDataState {
   resetForm: () => void;
   fetchDataCategoriesList: () => Promise<void>;
   submitEconomicData: (user : User) => Promise<void>;
-  // submit
+  submitEconomicDataValues: (economicDataValues : Record<string, string>) => Promise<void>;
 }
 
 export const useAddEconomicDataStore = create<AddEconomicDataState>((set, get) => {
@@ -96,35 +104,73 @@ export const useAddEconomicDataStore = create<AddEconomicDataState>((set, get) =
       economicDataValues: {},
     }),
 
+submitEconomicData: async (user: User) => {
+  const { formData, economicDataValues } = get();
+  set({ isLoading: true });
 
-  submitEconomicData: async (user : User) => {
-    const { formData } = get();
+  try {
+    // Transform Record<string, string> into array of { category, value }
+    const economicDataEntries: EconomicDataValue[] = Object.entries(economicDataValues)
+      .filter(([_, value]) => value !== "" && !isNaN(Number(value))) // avoid empty or invalid entries
+      .map(([key, value]) => ({
+        category: parseInt(key),
+        value: parseFloat(value),
+      }));
 
-    set({ isLoading: true });
-    try {
+    // Construct payload matching backend format
+    const economicDataProgressPayload = {
+      user: user.id,
+      fiscal_year: formData.fiscalYear,
+      contributors: [user.id],
+      report_type: formData.reportType,
+      province: formData.province,
+      district: formData.district,
+      municipality: formData.localBody,
+      sector: formData.sector,
+      is_completed: false,
+      economic_entries: economicDataEntries,
+    };
 
-      const economicDataProgressPayload = {
-        fiscal_year: formData.fiscalYear,
-        user: user.id,
-        contributors: [
-          user.id
-        ],
-        report_type: formData.reportType,
-        province: formData.province,
-        district: formData.district,
-        municipality : formData.localBody,
-        sector: formData.sector,
-        is_completed: false,
 
-      };
-      const response = await apiClient.post('/economic-data-progress/', economicDataProgressPayload);
-      console.log(response.data);
-      set({ economicDataValues: response.data });
-    } catch (error) {
-      console.error("Failed to submit economic data", error);
-    } finally {
-      set({ isLoading: false });
-    }
+
+    // Make API call
+    const response = await apiClient.post(
+      API_ENDPOINTS.ECONOMIC_DATA_PROGRESS,
+      economicDataProgressPayload
+    );
+
+    console.log("✅ Economic Data Submitted Successfully");
+    console.log(response.data);
+
+    // Optionally handle response
+    // if (response.status === 201) {
+    //   set({ economicDataValues: response.data });
+    //   await get().submitEconomicDataValues(get().economicDataValues);
+    // }
+
+  } catch (error: any) {
+    console.error("❌ Failed to submit economic data:", error.response?.data || error.message);
+  } finally {
+    set({ isLoading: false });
+  }
+},
+
+
+
+  submitEconomicDataValues: async (economicDataValues : Record<string, string>) => {
+    console.log(economicDataValues);
+    // set({ isLoading: true });
+    // try {
+    //   const response = await apiClient.post(API_ENDPOINTS.ECONOMIC_DATA_ENTRIES, economicDataValues);
+    //   console.log(response.data);
+    //   set({ economicDataValues: response.data });
+    // } catch (error) {
+    //   console.error("Failed to submit economic data values", error);
+    // } finally {
+    //   set({ isLoading: false });
+    // }
   },
+
+
 })
 });
