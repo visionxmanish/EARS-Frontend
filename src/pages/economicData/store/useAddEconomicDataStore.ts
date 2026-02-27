@@ -141,15 +141,8 @@ submitEconomicData: async (user: User) => {
 
     console.log("✅ Economic Data Submitted Successfully");
     console.log(response.data);
-
-    // Optionally handle response
-    // if (response.status === 201) {
-    //   set({ economicDataValues: response.data });
-    //   await get().submitEconomicDataValues(get().economicDataValues);
-    // }
-
   } catch (error: any) {
-    console.error("❌ Failed to submit economic data:", error.response?.data || error.message);
+    console.error("Failed to submit economic data:", error.response?.data || error.message);
   } finally {
     set({ isLoading: false });
   }
@@ -159,18 +152,7 @@ submitEconomicData: async (user: User) => {
 
   submitEconomicDataValues: async (economicDataValues : Record<string, string>) => {
     console.log(economicDataValues);
-    // set({ isLoading: true });
-    // try {
-    //   const response = await apiClient.post(API_ENDPOINTS.ECONOMIC_DATA_ENTRIES, economicDataValues);
-    //   console.log(response.data);
-    //   set({ economicDataValues: response.data });
-    // } catch (error) {
-    //   console.error("Failed to submit economic data values", error);
-    // } finally {
-    //   set({ isLoading: false });
-    // }
+  
   },
-
-
 })
 });
