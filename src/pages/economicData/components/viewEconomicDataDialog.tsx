@@ -16,7 +16,19 @@ interface ViewEconomicDataDialogProps {
 export function ViewEconomicDataDialog({ progress, open, onOpenChange }: ViewEconomicDataDialogProps) {
   const [categories, setCategories] = useState<any[]>([]);
   const [isLocalLoading, setIsLocalLoading] = useState(false);
-  const { fetchProgressEntries, selectedProgressEntries, isLoadingEntries } = useEconomicDataStore();
+  const { fetchProgressEntries, selectedProgressEntries, isLoadingEntries, rejectProgressEntry } = useEconomicDataStore();
+
+  const handleReject = async (entryId: number) => {
+    const reason = prompt("Enter rejection reason:");
+    if (reason !== null && reason.trim() !== "") {
+        try {
+            await rejectProgressEntry(entryId, reason);
+        } catch (error) {
+            console.error("Failed to reject entry", error);
+            alert("Failed to reject entry");
+        }
+    }
+  };
 
   useEffect(() => {
     if (open && progress) {
@@ -148,12 +160,14 @@ export function ViewEconomicDataDialog({ progress, open, onOpenChange }: ViewEco
                                                     name={node.name} 
                                                     value={rootEntry.value} 
                                                     unit={node.unit} 
+                                                    status={rootEntry.status}
                                                     isRoot 
+                                                    onReject={() => handleReject(rootEntry.id)}
                                                   />
                                               )}
                                               <div className="pl-4 mt-2 space-y-2">
                                                   {node.children.map((child: any) => (
-                                                      <CategoryNode key={child.id} node={child} entries={entries} depth={0} />
+                                                      <CategoryNode key={child.id} node={child} entries={entries} depth={0} onReject={handleReject} />
                                                   ))}
                                               </div>
                                          </div>
@@ -174,7 +188,7 @@ export function ViewEconomicDataDialog({ progress, open, onOpenChange }: ViewEco
   );
 }
 
-function CategoryNode({ node, entries, depth }: { node: any, entries: any[], depth: number }) {
+function CategoryNode({ node, entries, depth, onReject }: { node: any, entries: any[], depth: number, onReject: (id: number) => void }) {
     const entry = entries.find((e: any) => e.category === node.id);
     const hasValue = !!entry;
 
@@ -187,6 +201,7 @@ function CategoryNode({ node, entries, depth }: { node: any, entries: any[], dep
                         value={entry?.value} 
                         unit={node.unit} 
                         status={entry?.status}
+                        onReject={() => onReject(entry.id)}
                      />
                 </div>
             )}
@@ -200,7 +215,7 @@ function CategoryNode({ node, entries, depth }: { node: any, entries: any[], dep
             {node.children.length > 0 && (
                 <div className={`ml-4 border-l border-gray-100 pl-2`}>
                     {node.children.map((child: any) => (
-                        <CategoryNode key={child.id} node={child} entries={entries} depth={depth + 1} />
+                        <CategoryNode key={child.id} node={child} entries={entries} depth={depth + 1} onReject={onReject} />
                     ))}
                 </div>
             )}
@@ -208,7 +223,7 @@ function CategoryNode({ node, entries, depth }: { node: any, entries: any[], dep
     )
 }
 
-function DataRow({ name, value, unit, isRoot, status }: { name: string, value: string, unit?: string, isRoot?: boolean, status?: string }) {
+function DataRow({ name, value, unit, isRoot, status, onReject }: { name: string, value: string, unit?: string, isRoot?: boolean, status?: string, onReject?: () => void }) {
     const getStatusColor = (status?: string) => {
         switch (status?.toLowerCase()) {
             case 'approved': return "bg-green-100 text-green-700 hover:bg-green-100 border-green-200";
@@ -233,6 +248,16 @@ function DataRow({ name, value, unit, isRoot, status }: { name: string, value: s
                     <Badge variant="outline" className={`h-5 text-[10px] px-1.5 ${getStatusColor(status)}`}>
                         {status}
                     </Badge>
+                )}
+                {status?.toLowerCase() === 'pending' && onReject && (
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={onReject}
+                        className="h-6 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 px-2 ml-1"
+                    >
+                        Reject
+                    </Button>
                 )}
             </div>
         </div>

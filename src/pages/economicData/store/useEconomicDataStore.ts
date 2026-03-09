@@ -75,6 +75,7 @@ interface EconomicDataState {
   approveProgress: (id: number) => Promise<void>;
   rejectProgress: (id: number) => Promise<void>;
   deleteProgress: (id: number) => Promise<void>;
+  rejectProgressEntry: (id: number, reason: string) => Promise<void>;
 }
 
 export const useEconomicDataStore = create<EconomicDataState>((set, get) => {
@@ -233,6 +234,23 @@ export const useEconomicDataStore = create<EconomicDataState>((set, get) => {
              throw error;
         } finally {
             set({ isLoadingList: false });
+        }
+    },
+
+    rejectProgressEntry: async (id, reason) => {
+        set({ isLoadingEntries: true });
+        try {
+            await apiClient.post(`/economic-data-entries/${id}/reject/`, { rejected_reason: reason });
+            set(state => ({
+                selectedProgressEntries: state.selectedProgressEntries.map(item => 
+                    item.id === id ? { ...item, status: Status.REJECTED } : item
+                )
+            }));
+        } catch (error: any) {
+             console.error("Failed to reject entry", error);
+             throw error;
+        } finally {
+            set({ isLoadingEntries: false });
         }
     },
   });
