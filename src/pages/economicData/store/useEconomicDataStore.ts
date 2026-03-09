@@ -76,6 +76,7 @@ interface EconomicDataState {
   rejectProgress: (id: number) => Promise<void>;
   deleteProgress: (id: number) => Promise<void>;
   rejectProgressEntry: (id: number, reason: string) => Promise<void>;
+  editProgressEntry: (id: number, value: number) => Promise<void>;
 }
 
 export const useEconomicDataStore = create<EconomicDataState>((set, get) => {
@@ -243,11 +244,28 @@ export const useEconomicDataStore = create<EconomicDataState>((set, get) => {
             await apiClient.post(`/economic-data-entries/${id}/reject/`, { rejected_reason: reason });
             set(state => ({
                 selectedProgressEntries: state.selectedProgressEntries.map(item => 
-                    item.id === id ? { ...item, status: Status.REJECTED } : item
+                    item.id === id ? { ...item, status: Status.REJECTED, rejected_reason: reason } : item
                 )
             }));
         } catch (error: any) {
              console.error("Failed to reject entry", error);
+             throw error;
+        } finally {
+            set({ isLoadingEntries: false });
+        }
+    },
+
+    editProgressEntry: async (id, value) => {
+        set({ isLoadingEntries: true });
+        try {
+            await apiClient.patch(`/economic-data-entries/${id}/`, { value, status: Status.PENDING });
+            set(state => ({
+                selectedProgressEntries: state.selectedProgressEntries.map(item => 
+                    item.id === id ? { ...item, value, status: Status.PENDING, rejected_reason: null } : item
+                )
+            }));
+        } catch (error: any) {
+             console.error("Failed to edit entry", error);
              throw error;
         } finally {
             set({ isLoadingEntries: false });
