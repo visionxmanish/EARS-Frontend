@@ -35,7 +35,13 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination";
 
+import { useNavigate } from 'react-router-dom';
+
+
 export default function ManageEconomicDataPage() {
+
+    const navigate = useNavigate();
+
   const {
     progressList,
     isLoadingList,
@@ -145,7 +151,7 @@ export default function ManageEconomicDataPage() {
                     <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => setIsAddMode(true)}>
                         Add New
                     </Button>
-                    <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={() => console.log("Upload Excel")}>
+                    <Button className="bg-green-600 hover:bg-green-700 text-white" onClick={() => navigate("/upload-excel")}>
                         Upload Excel
                     </Button>
                 </div>

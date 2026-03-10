@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { FileText } from "lucide-react";
+import { FileText, Loader2 } from "lucide-react";
 import { useReportStore } from "./store/useReportStore";
 
 export default function ReportPage() {
@@ -20,7 +20,13 @@ export default function ReportPage() {
   const { sectors, fetchSectors } = useSectorStore();
   const { reportTypes, fetchReportTypes } = useCommonDataStore();
 
-  const { selectedFiscalYear, selectedSector, selectedReportLevel, selectedFiscalYear2, selectedSector2, selectedReportType, selectedReportLevel2, setFiscalYear, setSector, setReportLevel, setFiscalYear2, setSector2, setReportType, setReportLevel2 } = useReportStore();
+  const { 
+    selectedFiscalYear, selectedSector, selectedReportLevel, 
+    selectedFiscalYear2, selectedSector2, selectedReportType, selectedReportLevel2, 
+    isLoadingLevelReport, isLoadingDifferentReport,
+    generateLevelReport, generateDifferentReport,
+    setFiscalYear, setSector, setReportLevel, setFiscalYear2, setSector2, setReportType, setReportLevel2 
+  } = useReportStore();
 
 
   useEffect(() => {
@@ -30,20 +36,11 @@ export default function ReportPage() {
   }, []);
 
   const handleGenerateLevelReport = () => {
-    console.log("Generate Level Report", {
-        fiscalYear: selectedFiscalYear,
-        sector: selectedSector,
-        reportLevel: selectedReportLevel
-    });
+    generateLevelReport();
   };
 
   const handleGenerateDifferentReport = () => {
-     console.log("Generate Different Report", {
-        fiscalYear: selectedFiscalYear2,
-        sector: selectedSector2,
-        reportType: selectedReportType,
-        reportLevel: selectedReportLevel2
-    });
+     generateDifferentReport();
   };
 
   return (
@@ -132,9 +129,14 @@ export default function ReportPage() {
           <div>
              <Button 
                 onClick={handleGenerateLevelReport}
+                disabled={isLoadingLevelReport}
                 className="bg-[#0564bc] hover:bg-[#0564bc]/90 text-white font-medium px-6"
              >
-                <FileText className="mr-2 h-4 w-4" />
+                {isLoadingLevelReport ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <FileText className="mr-2 h-4 w-4" />
+                )}
                 Generate Report
              </Button>
           </div>
@@ -237,9 +239,14 @@ export default function ReportPage() {
           <div>
              <Button 
                 onClick={handleGenerateDifferentReport}
+                disabled={isLoadingDifferentReport}
                 className="bg-[#0564bc] hover:bg-[#0564bc]/90 text-white font-medium px-6"
              >
-                <FileText className="mr-2 h-4 w-4" />
+                {isLoadingDifferentReport ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <FileText className="mr-2 h-4 w-4" />
+                )}
                 Generate Report
              </Button>
           </div>

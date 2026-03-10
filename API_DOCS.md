@@ -624,6 +624,79 @@ curl -X DELETE http://localhost:8000/api/notifications/1/ \
 
 ---
 
+## Reports API
+
+### Generate Annual Report
+```bash
+curl -X POST http://localhost:8000/api/reports/annual/ \
+  -H "Authorization: Bearer your_access_token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fiscal_year_id": 1,
+    "half_period": null
+  }'
+```
+*Note: `half_period` can be `"first"` or `"second"`, or `null` for annual report.*
+*Returns: Excel file download (`application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`)*
+
+### Generate Level Report
+```bash
+curl -X POST http://localhost:8000/api/reports/level/ \
+  -H "Authorization: Bearer your_access_token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fiscal_year_id": 1,
+    "sector_id": 1,
+    "level": "district"
+  }'
+```
+*Note: `level` can be `"province"`, `"district"`, or `"municipality"`.*
+
+### Generate Different Report
+```bash
+curl -X POST http://localhost:8000/api/reports/different/ \
+  -H "Authorization: Bearer your_access_token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fiscal_year_id": 1,
+    "sector_id": 1,
+    "report_type_id": 1,
+    "level": "district"
+  }'
+```
+
+### Generate Percentage Report
+```bash
+curl -X POST http://localhost:8000/api/reports/percentage/ \
+  -H "Authorization: Bearer your_access_token" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fiscal_year_id": 1,
+    "sector_id": 1,
+    "report_type_id": 1,
+    "level": "district"
+  }'
+```
+
+### Upload Excel Data
+```bash
+curl -X POST http://localhost:8000/api/reports/upload-excel/ \
+  -H "Authorization: Bearer your_access_token" \
+  -F "excel_file=@/path/to/your/file.xlsx" \
+  -F "fiscal_year_id=1" \
+  -F "sector_id=1" \
+  -F "report_type_id=1"
+```
+*Content-Type: multipart/form-data*
+
+### Download Excel Template
+```bash
+curl -X GET "http://localhost:8000/api/reports/download-template/?sector_id=1" \
+  -H "Authorization: Bearer your_access_token"
+```
+
+---
+
 ## Dashboard API
 
 ### Get Dashboard Data

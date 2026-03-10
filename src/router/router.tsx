@@ -12,6 +12,7 @@ import OfficePage from '@/pages/offices/officePage';
 import ManageEconomicDataPage from '@/pages/economicData/manageEconomicDataPage';
 import ManageUsersPage from '@/pages/users/manageUsersPage';
 import ReportPage from '@/pages/reports/ReportPage';
+import UploadExcel from '@/pages/upload_excel/UploadExcel';
 
 
 const router = createBrowserRouter([
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: '/level-report',
         element: <Layout><ReportPage /></Layout>,
+      },
+      {
+        path: '/upload-excel',
+        element: <Layout><UploadExcel /></Layout>,
       },
       {
         path: '*',
