@@ -199,7 +199,8 @@ export const useEconomicDataStore = create<EconomicDataState>((set, get) => {
                 )
             }));
         } catch (error: any) {
-            set({ errorList: error.message || "Failed to approve" });
+            console.log(error.response.data.error);
+            set({ errorList: error.response.data.error || "Failed to approve" });
             throw error;
         } finally {
             set({ isLoadingList: false });
